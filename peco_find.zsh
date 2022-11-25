@@ -103,6 +103,6 @@ function _peco_find_file {
 
 zle -N _peco_find_file
 zle -N _peco_find_dir
-bindkey '^x^d' _peco_find_dir
-bindkey '^x^f' _peco_find_file
+bindkey '^g^d' _peco_find_dir
+bindkey '^g^f' _peco_find_file
 

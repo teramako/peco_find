@@ -102,7 +102,7 @@ _peco_find_file() {
   READLINE_POINT=${#left}
 }
 
-bind -x '"\C-x\C-d":_peco_find_dir'
-bind -x '"\C-x\C-f":_peco_find_file'
+bind -x '"\C-g\C-d":_peco_find_dir'
+bind -x '"\C-g\C-f":_peco_find_file'
 
 
