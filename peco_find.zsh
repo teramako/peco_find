@@ -1,7 +1,7 @@
 #!/bin/zsh
 # vim: set ft=zsh:
 
-_PECO_FIND_MAXDEPTH=3
+_PECO_FIND_MAXDEPTH=5
 _PECO_LAYOUT="top-down"
 
 ## set variable `cur` `left` `right`
@@ -63,12 +63,9 @@ function _peco_find_dir {
     fi
   fi
 
-  local peco_opts=(--layout ${_PECO_LAYOUT} --query "${_query}" --prompt "Directory: $(realpath ${_dir:-.})>'")
-  if [[ "$cur" = .* ]]; then
-    _result=$(fd . $_dir -t d -d ${_PECO_FIND_MAXDEPTH} | peco "${peco_opts[@]}")
-  else
-    _result=$(fd . $_dir -t d -d ${_PECO_FIND_MAXDEPTH} | sed 's|^\./||' | peco "${peco_opts[@]}")
-  fi
+  local peco_opts=(--layout ${_PECO_LAYOUT} --query "${_query}" --prompt "Directory: $(realpath ${_dir:-.})> ")
+  local fd_opts=(--type d --maxdepth ${_PECO_FIND_MAXDEPTH})
+  _result=$(fd "${fd_opts[@]}" . ${_dir:-} | peco "${peco_opts[@]}")
   left="${left}${_result}"
   BUFFER="${left}${right}"
   CURSOR=${#left}
@@ -80,23 +77,22 @@ function _peco_find_file {
   __init_line ${CURSOR} "${BUFFER}" || return
 
   local _dir="" _query="$(eval echo $cur)"  _result="" fd_opts=()
-  if [[ "$cur" = */* ]]; then
-    _query="${cur##*/}"
-    _dir="${cur%/*}"
-  fi
-  if [[ -n "$_query" ]]; then
-    if [[ "$_query" = *\** ]]; then
-      _fd_pattern="-g $_query"
+  if [[ "$_query" = */* ]]; then
+    if [[ -d "$_query" ]]; then
+      _dir="$_query"
+      _query=""
     else
-      _fd_pattern="-g '*$_query*'"
+      _dir="${_query%/*}"
+      _query="${_query##*/}"
     fi
+  elif [[ -d "$_query" ]]; then
+    _dir="$_query"
+    _query=""
   fi
-  local peco_opts=(--layout ${_PECO_LAYOUT} --prompt "File($_fd_pattern) in: $(realpath ${_dir:-.})>")
-  if [[ "$cur" = .* ]]; then
-    _result=$(fd $_fd_pattern $_dir -t f -d ${_PECO_FIND_MAXDEPTH} | peco "${peco_opts[@]}" | xargs)
-  else
-    _result=$(fd $_fd_pattern $_dir -t f -d ${_PECO_FIND_MAXDEPTH} | sed 's|^\./||' | peco "${peco_opts[@]}" | xargs)
-  fi
+  local peco_opts=(--layout ${_PECO_LAYOUT} --query "${_query}" --prompt "File in: $(realpath ${_dir:-.})>")
+  fd_opts+=(--type f --maxdepth ${_PECO_FIND_MAXDEPTH})
+  _result=$(fd "${fd_opts[@]}" . ${_dir:-} | peco "${peco_opts[@]}" | xargs)
+
   left="${left}${_result}"
   BUFFER="${left}${right}"
   CURSOR=${#left}
