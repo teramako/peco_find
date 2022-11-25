@@ -72,6 +72,7 @@ function _peco_find_dir {
   left="${left}${_result}"
   BUFFER="${left}${right}"
   CURSOR=${#left}
+  zle reset-prompt
 }
 
 function _peco_find_file {
@@ -99,6 +100,7 @@ function _peco_find_file {
   left="${left}${_result}"
   BUFFER="${left}${right}"
   CURSOR=${#left}
+  zle reset-prompt
 }
 
 zle -N _peco_find_file
