@@ -49,7 +49,7 @@ __init_line() {
 _peco_find_dir() {
   local cur left right
   __init_line ${READLINE_POINT} "${READLINE_LINE}" || return
-  local _dir="$(eval echo "${cur:-.}")" _query="" _result=""
+  local _dir="$(eval echo ${cur:-.})" _query="" _result=""
   if [ ! -d "${_dir}" ]; then
     _query="${_dir##*/}"
     _dir="${_dir%/*}"
@@ -77,7 +77,7 @@ _peco_find_file() {
   local cur left right
   __init_line ${READLINE_POINT} "${READLINE_LINE}" || return
 
-  local _dir="" _query="$cur" _fd_pattern="."  _result=""
+  local _dir="" _query="$(eval echo $cur)"  _result="" fd_opts=()
   if [[ "$cur" = */* ]]; then
     _query="${cur##*/}"
     _dir="${cur%/*}"
